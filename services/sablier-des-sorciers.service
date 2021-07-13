@@ -1,0 +1,17 @@
+[Unit]
+Description=Moteur du sablier des sorciers
+After=network.target
+
+[Service]
+User=root
+Group=root
+ExecStart=/usr/bin/node /var/www/sablier-des-sorciers/app/server.js
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=root
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

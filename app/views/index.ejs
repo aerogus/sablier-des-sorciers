@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Le Sablier des Sorciers</title>
+  <link rel="stylesheet" href="/css/common.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body>
+
+  <div id="main">
+    <h1>Le Sablier des Sorciers</h1>
+  </div>
+
+  <script>
+    var app;
+    var settings = settings || [];
+    settings.ws = 'http://<%= ws_host %>:<%= ws_port %>';
+  </script>
+  <script src="/js/jquery-3.6.0.min.js"></script>
+  <script src="/js/moment-2.29.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module">
+    import {App} from './js/app.mjs';
+    document.addEventListener('DOMContentLoaded', () => {
+      app = new App();
+    });
+  </script>
+</body>
+
+</html>

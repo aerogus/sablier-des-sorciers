@@ -1,0 +1,18 @@
+{
+  "name": "sablier-des-sorciers",
+  "version": "1.0.0",
+  "description": "exemple de décompte, vidéo Youtube https://www.youtube.com/watch?v=UeQAarcw000",
+  "main": "./app/server.js",
+  "scripts": {
+    "start": "./app/server.js",
+    "clean": "rm -Rf node_modules log"
+  },
+  "author": "Guillaume Seznec <guillaume@seznec.fr>",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "3.1.6",
+    "express": "4.17.1",
+    "moment": "2.29.1",
+    "socket.io": "4.1.3"
+  }
+}

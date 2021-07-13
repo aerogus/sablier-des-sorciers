@@ -1,0 +1,22 @@
+{
+  "global": {
+    "title": "Le Sablier des Sorciers",
+    "version": "v0.1a",
+    "author": "Guillaume Seznec",
+    "url": "https://github.com/aerogus/sablier-des-sorciers.git"
+  },
+  "server": {
+    "PORT": 80,
+    "HOST": "127.0.0.1"
+  },
+  "room1": {
+    "title": "La chambre des secrets",
+    "background": "/img/chambre.jpg",
+    "length": 3600
+  },
+  "room2": {
+    "title": "Le donjon",
+    "background": "/img/donjon.jpg",
+    "length": 3600
+  }
+}

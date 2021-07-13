@@ -1,0 +1,21 @@
+
+/* webfonts */
+
+@font-face {
+    font-family: 'HarryPotter';
+    src: url(../fonts/harry-potter.woff) format('woff'),
+         url(../fonts/harry-potter.ttf) format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background: pink;
+}
+
+h1 {
+    font-family: 'HarryPotter';
+    padding: 2rem;
+    font-size: 3.6rem;
+    text-align: center;
+}
