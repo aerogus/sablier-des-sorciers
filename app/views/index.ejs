@@ -10,14 +10,27 @@
 
 <body>
 
-  <div id="main">
-    <h1>Le Sablier des Sorciers</h1>
+  <div id="wrapper">
+    <h1>Poudlard' Ados - Salle A</h1>
+    <div id="clock_wrapper">
+      <div id="clock">
+        <span id="min">88</span>
+        <span id="dot">:</span>
+        <span id="sec">88</span>
+      </div>
+    </div>
+    <div id="btns_cmd">
+      <button id="btn_start" data-cmd="start" class="btn_start" title="Lancer le compteur">Start</button>
+      <button id="btn_pause" data-cmd="pause" class="btn_pause" title="Mettre en pause le compteur">Pause</button>
+      <button id="btn_reset" data-cmd="reset" class="btn_reset" title="Remettre à zéro le compteur">Reset</button>
+    </div>
   </div>
 
   <script>
     var app;
     var settings = settings || [];
     settings.ws = 'http://<%= ws_host %>:<%= ws_port %>';
+    settings.room = '<%= room %>';
   </script>
   <script src="/js/jquery-3.6.0.min.js"></script>
   <script src="/js/moment-2.29.1.min.js"></script>

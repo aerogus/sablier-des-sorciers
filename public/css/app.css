@@ -3,19 +3,103 @@
 
 @font-face {
     font-family: 'HarryPotter';
-    src: url(../fonts/harry-potter.woff) format('woff'),
-         url(../fonts/harry-potter.ttf) format('ttf');
+    src: url(../fonts/harry-potter-webfont.woff2) format('woff2'),
+         url(../fonts/harry-potter-webfont.woff) format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
-body {
-    background: pink;
+@font-face {
+    font-family: 'Dumbledor';
+    src: url(../fonts/dumbledor-webfont.woff2) format('woff2'),
+         url(../fonts/dumbledor-webfont.woff) format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
+/* global */
+
+#wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: url(/img/main.jpg) no-repeat center center / cover black;
+    padding: 1rem;
+}
+#wrapper:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    box-shadow: inset 0 0 20rem black; /* vignettage */
+  }
 h1 {
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
     font-family: 'HarryPotter';
     padding: 2rem;
     font-size: 3.6rem;
     text-align: center;
+    color: #ffc500;
+    text-shadow: 2px 2px 0px #000000f0;
+}
+
+/* horloge */
+
+#clock_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+#clock {
+    font-family: 'Dumbledor', 'Arial';
+    border: .5rem solid;
+    color: #ffc500;
+    background-color: #000000f0;
+    font-size: 7.4rem;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 11rem 4rem;
+    box-shadow: 0px 0px 1rem #000;
+}
+#clock span {
+    text-align: center;
+}
+
+/* boutons de commande */
+
+#btns_cmd {
+    display: flex;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 1rem;
+    width: 100%;
+}
+button {
+    z-index: 1000;
+    border: .2rem solid;
+    font-family: 'Dumbledor', 'Arial';
+    color: #ffc500;
+    background-color: #000000f0;
+    font-size: 1.4rem;
+    border-radius: 1rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px black;
+    box-shadow: 0px 0px 1rem #000;
+}
+button:hover {
+    border: .2rem solid #ffc500;
+    background-color: #ffc500;
+    color: #000000;
+}
+#btn_reset {
+    margin-left: auto;
 }
