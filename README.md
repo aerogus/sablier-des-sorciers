@@ -24,7 +24,7 @@ Adaptez le fichier `conf/settings.json` pour saisir l'ip de la machine serveur, 
 Si Docker est installé, vous pouvez utiliser la commande suivante :
 
 ```
-docker run ... à finir
+docker run -p 80:80 .
 ```
 
 sinon
@@ -45,6 +45,15 @@ Devrait afficher
 ```
 
 Allez maintenant avec votre navigateur à l'url `http://127.0.0.1`
+
+Pour lancer le serveur au démarrage de la machine, sous Debian avec systemd, en root (ou préfixé par sudo) :
+
+```
+cp ./services/sablier-des-sorciers.service /etc/systemd/system
+systemctl daemon-reload
+systemctl enable sablier-des-sorciers
+systemctl start sablier-des-sorciers
+```
 
 ## Ressources
 

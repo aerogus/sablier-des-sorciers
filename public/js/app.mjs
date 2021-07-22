@@ -2,111 +2,138 @@
 
 'use strict';
 
-export class App {
+let timer = null;
+let counter = 0;
+let socket = null;
 
-  handleBtns() {
-    let room = this.settings.room;
-    document.addEventListener('click', function (e) {
-      let action = e.target.dataset.cmd;
-      switch (action) {
-        case 'START':
-          console.log(`click START pour room ${room}`);
-          this.socket.emit('START', {room});
-          break;
-        case 'PAUSE':
-          console.log(`click PAUSE pour room ${room}`);
-          this.socket.emit('PAUSE', {room});
-          break;
-        case 'RESET':
-          console.log(`click RESET pour room ${room}`);
-          this.socket.emit('RESET', {room});
-          break;
-      }
-    });
-  }
+function init() {
+  console.log('init');
+  socket = io(settings.host);
+  socket.emit('DUMP');
 
-  handleKeyPressed() {
-    let room = this.settings.room;
-    document.addEventListener("keydown", (e) => {
-      let key = e.key.toUpperCase();
-      switch (key) {
+  initRoomName();
+  handleKeyPressed();
+  handleBtns();
 
-        case "F": // Full Screen on/off
-          console.log(`touche F pressée pour room ${room}`);
-          if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-          } else {
-            if (document.exitFullscreen) {
-              document.exitFullscreen(); 
-            }
+  socket.on('connect', () => {
+    console.log(`[OK] connecté à ${settings.host}`);
+  });
+
+  socket.on('connect_error', () => {
+    console.log(`[KO] ${settings.host} non démarré`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`[OK] déconnecté de ${settings.host}`);
+  });
+
+  socket.on('DUMP', (data) => {
+    console.log('DUMP reçu');
+    console.log(data);
+    // traitement des données initiales reçues
+  });
+
+  socket.on('START', (roomId) => {
+    console.log('START reçu');
+    console.log(roomId);
+  });
+
+  socket.on('PAUSE', (roomId) => {
+    console.log('PAUSE reçu');
+    console.log(roomId);
+  });
+
+  socket.on('RESET', (roomId) => {
+    console.log('RESET reçu');
+    console.log(roomId);
+  });
+}
+
+export {init};
+
+function handleBtns() {
+  document.getElementById('btn_start').addEventListener('click', () => {
+    console.log(`click START pour room ${settings.room}`);
+    socket.emit('START', {room: settings.room});
+    startTimer();
+  });
+  document.getElementById('btn_pause').addEventListener('click', () => {
+    console.log(`click PAUSE pour room ${settings.room}`);
+    socket.emit('PAUSE', {room: settings.room});
+    pauseTimer();
+  });
+  document.getElementById('btn_reset').addEventListener('click', () => {
+    console.log(`click RESET pour room ${settings.room}`);
+    socket.emit('RESET', {room: settings.room});
+    resetTimer();
+  });
+}
+
+function handleKeyPressed() {
+  let room = settings.room;
+  document.addEventListener("keydown", (e) => {
+    let key = e.key.toUpperCase();
+    switch (key) {
+
+      case "F": // Full Screen on/off
+        console.log(`touche F pressée pour room ${room}`);
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
           }
-          break;
+        }
+        break;
 
-        case "S": // START
-          console.log(`touche S pressée pour room ${room}`);
-          this.socket.emit('START', {room: room});
-          break;
+      case "S": // START
+        console.log(`touche S pressée pour room ${room}`);
+        socket.emit('START', {room: room});
+        startTimer();
+        break;
 
-        case "P": // PAUSE
-          console.log(`touche P pressée pour room ${room}`);
-          this.socket.emit('PAUSE', {room: room});
-          break;
+      case "P": // PAUSE
+        console.log(`touche P pressée pour room ${room}`);
+        socket.emit('PAUSE', {room: room});
+        pauseTimer();
+        break;
 
-        case "Z": // RESET
-          console.log(`touche Z pressée pour room ${room}`);
-          this.socket.emit('RESET', {room: room});
-          break;
-      }
+      case "Z": // RESET
+        console.log(`touche Z pressée pour room ${room}`);
+        socket.emit('RESET', {room: room});
+        resetTimer();
+        break;
+    }
 
-    }, false);
+  }, false);
 
-  }
+}
 
-  constructor() {
+function displayClock() {
+  let struct = {
+    min: Math.floor(counter / 60),
+    sec: counter % 60
+  };
+  document.getElementById('min').innerHTML = struct.min.toString().padStart(2, '0');
+  document.getElementById('sec').innerHTML = struct.sec.toString().padStart(2, '0');
+}
 
-    this.settings = {
-      // serveur temps réel
-      host: settings.ws,
-      room: settings.room
-    };
+function initRoomName() {
+  document.getElementById('room-name').innerHTML = `Salle ${settings.room}`;
+}
 
-    this.socket = io(this.settings.host);
-    this.socket.emit('DUMP');
+function startTimer() {
+  displayClock();
+  counter++;
+  timer = setTimeout(startTimer, 1000);
+}
 
-    this.handleKeyPressed();
-    this.handleBtns();
+function pauseTimer() {
+  clearTimeout(timer);
+}
 
-    this.socket.on('connect', () => {
-      console.log(`[OK] connecté à ${this.settings.host}`);
-    });
-
-    this.socket.on('connect_error', () => {
-      console.log(`[KO] ${this.settings.host} non démarré`);
-    });
-
-    this.socket.on('disconnect', () => {
-      console.log(`[OK] déconnecté de ${this.settings.host}`);
-    });
-
-    this.socket.on('DUMP', () => {
-      // traitement des données initiales reçues
-    });
-
-    this.socket.on('START', (roomId) => {
-      console.log('START reçu');
-      console.log(roomId);
-    });
-
-    this.socket.on('PAUSE', (roomId) => {
-      console.log('PAUSE reçu');
-      console.log(roomId);
-    });
-
-    this.socket.on('RESET', (roomId) => {
-      console.log('RESET reçu');
-      console.log(roomId);
-    });
-
-  }
-
+function resetTimer() {
+  clearTimeout(timer);
+  counter = 0;
+  displayClock();
 }

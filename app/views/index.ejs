@@ -11,7 +11,7 @@
 <body>
 
   <div id="wrapper">
-    <h1>Poudlard' Ados - Salle A</h1>
+    <h1>Poudlard' Ados · <span id="room-name"></span></h1>
     <div id="clock_wrapper">
       <div id="clock">
         <span id="min">88</span>
@@ -36,9 +36,9 @@
   <script src="/js/moment-2.29.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module">
-    import {App} from './js/app.mjs';
+    import {init} from './js/app.mjs';
     document.addEventListener('DOMContentLoaded', () => {
-      app = new App();
+      init();
     });
   </script>
 </body>
