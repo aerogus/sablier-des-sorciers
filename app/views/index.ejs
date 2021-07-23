@@ -12,28 +12,34 @@
 
   <div id="wrapper">
     <h1>Poudlard' Ados · <span id="room-name"></span></h1>
+    <div id="btn_rooms">
+      <button id="btn_rooms" title="Voir toutes les salles">Salles</button>
+      <button id="btn_roomA" title="Voir la salle A">Salle A</button>
+      <button id="btn_roomB" title="Voir la salle B">Salle B</button>
+    </div>
     <div id="clock_wrapper">
-      <div id="clock">
-        <span id="min">88</span>
-        <span id="dot">:</span>
-        <span id="sec">88</span>
+      <div id="clock_inner_wrapper">
+        <div id="clock">
+          <span id="min">00</span>
+          <span id="dot">:</span>
+          <span id="sec">00</span>
+        </div>
       </div>
     </div>
     <div id="btns_cmd">
-      <button id="btn_start" data-cmd="start" class="btn_start" title="Lancer le compteur">Start</button>
-      <button id="btn_pause" data-cmd="pause" class="btn_pause" title="Mettre en pause le compteur">Pause</button>
-      <button id="btn_reset" data-cmd="reset" class="btn_reset" title="Remettre à zéro le compteur">Reset</button>
+      <button id="btn_start" title="Lancer le compteur">Start</button>
+      <button id="btn_pause" title="Mettre en pause le compteur">Pause</button>
+      <button id="btn_reset" title="Remettre à zéro le compteur">Reset</button>
     </div>
   </div>
 
   <script>
     var app;
     var settings = settings || [];
-    settings.ws = 'http://<%= ws_host %>:<%= ws_port %>';
+    settings.server = '//<%= ws_host %>:<%= ws_port %>';
     settings.room = '<%= room %>';
+    settings.room = settings.room.toUpperCase();
   </script>
-  <script src="/js/jquery-3.6.0.min.js"></script>
-  <script src="/js/moment-2.29.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="module">
     import {init} from './js/app.mjs';

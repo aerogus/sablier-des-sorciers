@@ -5,16 +5,5 @@
   "url": "https://github.com/aerogus/sablier-des-sorciers.git",
   "port": 80,
   "host": "127.0.0.1",
-  "rooms": [
-    {
-      "id": "A",
-      "counter": 0,
-      "started": false
-    },
-    {
-      "id": "B",
-      "counter": 0,
-      "started": false
-    }
-  ]
+  "rooms": 2
 }

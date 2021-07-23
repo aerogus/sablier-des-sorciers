@@ -2,13 +2,17 @@
 
 'use strict';
 
+// timer de la salle courante
 let timer = null;
+// compteur de la salle courante
 let counter = 0;
 let socket = null;
 
+// initialisation de l'application
 function init() {
   console.log('init');
-  socket = io(settings.host);
+
+  socket = io(settings.server);
   socket.emit('DUMP');
 
   initRoomName();
@@ -16,15 +20,15 @@ function init() {
   handleBtns();
 
   socket.on('connect', () => {
-    console.log(`[OK] connecté à ${settings.host}`);
+    console.log(`[OK] connecté à ${settings.server}`);
   });
 
   socket.on('connect_error', () => {
-    console.log(`[KO] ${settings.host} non démarré`);
+    console.log(`[KO] ${settings.server} non démarré`);
   });
 
   socket.on('disconnect', () => {
-    console.log(`[OK] déconnecté de ${settings.host}`);
+    console.log(`[OK] déconnecté de ${settings.server}`);
   });
 
   socket.on('DUMP', (data) => {
@@ -33,19 +37,28 @@ function init() {
     // traitement des données initiales reçues
   });
 
-  socket.on('START', (roomId) => {
+  // reçu l'événement START
+  socket.on('START', (room) => {
     console.log('START reçu');
-    console.log(roomId);
+    if (settings.room === '' || settings.room === room) {
+      console.log(`traitement START ${room}`);
+    }
   });
 
-  socket.on('PAUSE', (roomId) => {
+  // reçu l'événement PAUSE
+  socket.on('PAUSE', (room) => {
     console.log('PAUSE reçu');
-    console.log(roomId);
+    if (settings.room === '' || settings.room === room) {
+      console.log(`traitement PAUSE ${room}`);
+    }
   });
 
-  socket.on('RESET', (roomId) => {
+  // reçu l'événement RESET
+  socket.on('RESET', (room) => {
     console.log('RESET reçu');
-    console.log(roomId);
+    if (settings.room === '' || settings.room === room) {
+      console.log(`traitement RESET ${room}`);
+    }
   });
 }
 
@@ -54,17 +67,14 @@ export {init};
 function handleBtns() {
   document.getElementById('btn_start').addEventListener('click', () => {
     console.log(`click START pour room ${settings.room}`);
-    socket.emit('START', {room: settings.room});
     startTimer();
   });
   document.getElementById('btn_pause').addEventListener('click', () => {
     console.log(`click PAUSE pour room ${settings.room}`);
-    socket.emit('PAUSE', {room: settings.room});
     pauseTimer();
   });
   document.getElementById('btn_reset').addEventListener('click', () => {
     console.log(`click RESET pour room ${settings.room}`);
-    socket.emit('RESET', {room: settings.room});
     resetTimer();
   });
 }
@@ -81,26 +91,23 @@ function handleKeyPressed() {
           document.documentElement.requestFullscreen();
         } else {
           if (document.exitFullscreen) {
-            document.exitFullscreen();
+            document.exitFullscreen(); 
           }
         }
         break;
 
       case "S": // START
         console.log(`touche S pressée pour room ${room}`);
-        socket.emit('START', {room: room});
         startTimer();
         break;
 
       case "P": // PAUSE
         console.log(`touche P pressée pour room ${room}`);
-        socket.emit('PAUSE', {room: room});
         pauseTimer();
         break;
 
       case "Z": // RESET
         console.log(`touche Z pressée pour room ${room}`);
-        socket.emit('RESET', {room: room});
         resetTimer();
         break;
     }
@@ -122,17 +129,37 @@ function initRoomName() {
   document.getElementById('room-name').innerHTML = `Salle ${settings.room}`;
 }
 
+// démarre le timer de la salle courante
 function startTimer() {
+  if (!settings.room) return;
+
+  socket.emit('START', {room: settings.room});
+
   displayClock();
+  document.getElementById('dot').classList.toggle('tictac');
   counter++;
   timer = setTimeout(startTimer, 1000);
 }
 
+// met en pause le timer de la salle courante
 function pauseTimer() {
+  if (!settings.room) return;
+
+  if (counter > 0) {
+    counter--;
+  }
+
+  socket.emit('PAUSE', {room: settings.room});
+
   clearTimeout(timer);
 }
 
+// remet à zéro le timer de la salle courante
 function resetTimer() {
+  if (!settings.room) return;
+
+  socket.emit('RESET', {room: settings.room});
+
   clearTimeout(timer);
   counter = 0;
   displayClock();

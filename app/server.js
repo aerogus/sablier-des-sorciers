@@ -22,47 +22,38 @@ io.on('connection', socket => {
 
   log(`client connecté : ${socket.handshake.headers.host}`);
 
-  function handleDUMP() {
+  // demande le contenu de la mémoire
+  socket.on('DUMP', () => {
     log('DUMP reçu');
     socket.emit('DUMP', {
-      "data": "coucou"
+      "rooms": rooms.dump()
     });
     log('DUMP émis');
-  }
-
-  function handleSTART(params) {
-    log(params);
-    log(`START reçu pour salle ${params.room}`);
-    log(`START émis pour salle ${params.room}`);
-  }
-
-  function handlePAUSE(params) {
-    log(params);
-    log(`PAUSE reçu pour salle ${params.room}`);
-    log(`PAUSE émis pour salle ${params.room}`);
-  }
-
-  function handleRESET(params) {
-    log(params);
-    log(`RESET reçu pour salle ${params.room}`);
-    log(`RESET émis pour salle ${params.room}`);
-  }
-
-  // demande le contenu de la mémoire
-  socket.on('DUMP', handleDUMP);
+  });
 
   // START compteur
-  socket.on('START', (params) => {
+  socket.on('START', params => {
     log(params);
     log(`START reçu pour salle ${params.room}`);
+    rooms.start(params.room);
     log(`START émis pour salle ${params.room}`);
   });
 
   // PAUSE compteur
-  socket.on('PAUSE', handlePAUSE);
+  socket.on('PAUSE', params => {
+    log(params);
+    log(`PAUSE reçu pour salle ${params.room}`);
+    rooms.pause(params.room);
+    log(`PAUSE émis pour salle ${params.room}`);
+  });
 
   // RESET compteur
-  socket.on('RESET', handleRESET);
+  socket.on('RESET', params => {
+    log(params);
+    log(`RESET reçu pour salle ${params.room}`);
+    rooms.reset(params.room);
+    log(`RESET émis pour salle ${params.room}`);
+  });
 
   // déconnexion du client
   socket.on('disconnect', () => {
@@ -75,11 +66,11 @@ log('Liste des interfaces réseau:')
 log(utils.getIp());
 
 settings.set('host', utils.getIp()['en0'][0]);
+rooms.init();
+log(rooms.dump());
 
 // démarrage serveur
 log(`serveur ${settings.get('host')} en cours de démarrage...`);
-
-//rooms.load();
 
 server.listen(settings.get('port'), () => {
   log(`écoute sur le port ${settings.get('port')}`);
