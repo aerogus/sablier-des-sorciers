@@ -12,10 +12,10 @@
 
   <div id="wrapper">
     <h1>Poudlard' Ados · <span id="room-name"></span></h1>
-    <div id="btn_rooms">
-      <button id="btn_rooms" title="Voir toutes les salles">Salles</button>
-      <button id="btn_roomA" title="Voir la salle A">Salle A</button>
-      <button id="btn_roomB" title="Voir la salle B">Salle B</button>
+    <div id="btns_go">
+      <button id="btn_go_rooms"  data-go=""  class="btn_go selected" title="Voir toutes les salles">Tableau de bord</button>
+      <button id="btn_go_room_A" data-go="A" class="btn_go" title="Voir la salle A">Salle A</button>
+      <button id="btn_go_room_B" data-go="B" class="btn_go" title="Voir la salle B">Salle B</button>
     </div>
     <div id="clock_wrapper">
       <div id="clock_inner_wrapper">
@@ -27,14 +27,13 @@
       </div>
     </div>
     <div id="btns_cmd">
-      <button id="btn_start" title="Lancer le compteur">Start</button>
-      <button id="btn_pause" title="Mettre en pause le compteur">Pause</button>
-      <button id="btn_reset" title="Remettre à zéro le compteur">Reset</button>
+      <button id="btn_cmd_start" data-cmd="START" class="btn_cmd" title="Lancer le compteur">Start</button>
+      <button id="btn_cmd_pause" data-cmd="PAUSE" class="btn_cmd" title="Mettre en pause le compteur">Pause</button>
+      <button id="btn_cmd_reset" data-cmd="RESET" class="btn_cmd" title="Remettre à zéro le compteur">Reset</button>
     </div>
   </div>
 
   <script>
-    var app;
     var settings = settings || [];
     settings.server = '//<%= ws_host %>:<%= ws_port %>';
     settings.room = '<%= room %>';

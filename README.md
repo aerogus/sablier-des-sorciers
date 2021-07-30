@@ -59,3 +59,4 @@ systemctl start sablier-des-sorciers
 
 * exemple de décompte, vidéo YouTube: https://www.youtube.com/watch?v=UeQAarcw000
 * Utilisation du logiciel Max: https://www.youtube.com/watch?v=xA_VLpMBRZE
+* Une app node.js de gestion multi horloge multi clients : https://github.com/josephdadams/TimeKeeper

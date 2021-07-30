@@ -25,6 +25,15 @@ module.exports = {
     }
 
     return results;
+  },
+
+  // conversion secondes en XX:XX
+  formatDate(counter) {
+    let struct = {
+      min: Math.floor(counter / 60),
+      sec: counter % 60
+    };
+    return struct.min.toString().padStart(2, '0') + ':' + struct.sec.toString().padStart(2, '0');
   }
 
 };

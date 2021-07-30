@@ -25,34 +25,30 @@ io.on('connection', socket => {
   // demande le contenu de la mémoire
   socket.on('DUMP', () => {
     log('DUMP reçu');
-    socket.emit('DUMP', {
+    // todo émettre qu'au client, pas à tous
+    socket.emit('DUMPED', {
       "rooms": rooms.dump()
     });
-    log('DUMP émis');
+    log('DUMPED émis');
+    log(rooms.dump());
   });
 
   // START compteur
   socket.on('START', params => {
-    log(params);
     log(`START reçu pour salle ${params.room}`);
     rooms.start(params.room);
-    log(`START émis pour salle ${params.room}`);
   });
 
   // PAUSE compteur
   socket.on('PAUSE', params => {
-    log(params);
     log(`PAUSE reçu pour salle ${params.room}`);
     rooms.pause(params.room);
-    log(`PAUSE émis pour salle ${params.room}`);
   });
 
   // RESET compteur
   socket.on('RESET', params => {
-    log(params);
     log(`RESET reçu pour salle ${params.room}`);
     rooms.reset(params.room);
-    log(`RESET émis pour salle ${params.room}`);
   });
 
   // déconnexion du client
@@ -67,6 +63,7 @@ log(utils.getIp());
 
 settings.set('host', utils.getIp()['en0'][0]);
 rooms.init();
+log('rooms:');
 log(rooms.dump());
 
 // démarrage serveur

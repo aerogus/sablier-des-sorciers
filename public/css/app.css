@@ -78,8 +78,11 @@ h1 {
 
 /* boutons salles */
 
-#btn_rooms {
+#btns_go {
     display: flex;
+}
+#btn_go_rooms {
+    margin-right: auto;
 }
 
 /* boutons de commande */
@@ -106,12 +109,14 @@ button {
     font-weight: bold;
     text-shadow: 1px 1px 1px black;
     box-shadow: 0px 0px 1rem #000;
+    transition: all .1s linear;
 }
-button:hover {
+button:hover,
+button.selected {
     border: .2rem solid #ffc500;
     background-color: #ffc500;
     color: #000000;
 }
-#btn_reset {
+#btn_cmd_reset {
     margin-left: auto;
 }
