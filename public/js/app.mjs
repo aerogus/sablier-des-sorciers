@@ -8,13 +8,7 @@ let rooms = [];
 // id de la salle courante
 let room = null;
 
-// timer de la salle courante
-//let timer = null;
-
-// compteur de la salle courante
-//let counter = 0;
-
-// connexion ws
+// connexion serveur
 let socket = null;
 
 // initialisation de l'application
@@ -25,9 +19,9 @@ function init() {
   socket.emit('DUMP'); // demande du contenu mémoire du serveur
 
   // quelques écouteurs boutons + clavier
-  handleKeyPressed();
-  handleBtnsCmd();
   handleBtnsGo();
+  handleBtnsCmd();
+  handleKeyPressed();
 
   // aller dans la bonne salle
   room = settings.room;
@@ -57,26 +51,26 @@ function init() {
         rooms[idx].timer = setInterval(() => {
           updateTimer(room.id);
         }, 1000);
+      } else {
+        rooms[idx].timer = null;
       }
+      displayClock(room.id);
     });
   });
 
-  // reçu l'événement START
-  socket.on('START', (roomId) => {
-    console.log(`START reçu pour room ${roomId}`);
-    startTimer(roomId);
+  socket.on('STARTED', (params) => {
+    console.log(`STARTED reçu pour room ${params.room}`);
+    startTimer(params.room, false);
   });
 
-  // reçu l'événement PAUSE
-  socket.on('PAUSE', (roomId) => {
-    console.log(`PAUSE reçu pour room ${roomId}`);
-    pauseTimer(roomId);
+  socket.on('PAUSED', (params) => {
+    console.log(`PAUSED reçu pour room ${params.room}`);
+    pauseTimer(params.room, false);
   });
 
-  // reçu l'événement RESET
-  socket.on('RESET', (roomId) => {
-    console.log(`RESET reçu pour room ${roomId}`);
-    resetTimer(roomId);
+  socket.on('RESETED', (params) => {
+    console.log(`RESETED reçu pour room ${params.room}`);
+    resetTimer(params.room, false);
   });
 }
 
@@ -93,13 +87,13 @@ function handleBtnsCmd() {
     btn.addEventListener('click', () => {
       switch (btn.dataset.cmd) {
         case 'START':
-          startTimer(room);
+          startTimer(room, true);
           break;
         case 'PAUSE':
-          pauseTimer(room);
+          pauseTimer(room, true);
           break;
         case 'RESET':
-          resetTimer(room);
+          resetTimer(room, true);
           break;
       }
     });
@@ -125,22 +119,22 @@ function handleKeyPressed() {
 
       case "S": // START
         if (room) {
-          console.log(`touche S pressée pour room ${room}`);
-          startTimer(room);
+          console.log(`touche S pressée pour room active (${room})`);
+          startTimer(room, true);
         }
         break;
 
       case "P": // PAUSE
         if (room) {
-          console.log(`touche P pressée pour room ${room}`);
-          pauseTimer(room);
+          console.log(`touche P pressée pour room active (${room})`);
+          pauseTimer(room, true);
         }
         break;
 
       case "Z": // RESET
         if (room) {
-          console.log(`touche Z pressée pour room ${room}`);
-          resetTimer(room);
+          console.log(`touche Z pressée pour room active (${room})`);
+          resetTimer(room, true);
         }
         break;
     }
@@ -158,89 +152,118 @@ function keyById(id) {
   return idx;
 }
 
-// préciser le n° de salle
 function displayClock(roomId) {
+  // formatage
   let idx = keyById(roomId);
-  console.log('idx = ' + idx);
   let counter = rooms[idx].counter;
   let struct = {
     min: Math.floor(counter / 60),
     sec: counter % 60
   };
-  document.getElementById('min').innerHTML = struct.min.toString().padStart(2, '0');
-  document.getElementById('sec').innerHTML = struct.sec.toString().padStart(2, '0');
+  // affichage
+  document.querySelector(`.clock_outer_wrapper[data-room="${roomId}"] .min`).innerHTML = struct.min.toString().padStart(2, '0');
+  document.querySelector(`.clock_outer_wrapper[data-room="${roomId}"] .dot`).classList.toggle('tictac');
+  document.querySelector(`.clock_outer_wrapper[data-room="${roomId}"] .sec`).innerHTML = struct.sec.toString().padStart(2, '0');
 }
 
 // changement de salle
 function goToRoom(roomId) {
+  // nouvelle salle active
   room = roomId;
 
-  let title = '';
-
+  // activation seulement du bouton actif
   document.querySelector('.btn_go.selected').classList.remove('selected');
-  document.querySelector('.btn_go[data-go="'+roomId+'"]').classList.add('selected');
+  document.querySelector(`.btn_go[data-go="${roomId}"]`).classList.add('selected');
 
+  // commande que si on est dans une salle
   if (!roomId) {
-    title = 'Tableau de bord';
     document.getElementById('btns_cmd').style.display = 'none';
   } else {
-    title= `Salle ${roomId}`;
     document.getElementById('btns_cmd').style.display = 'flex';
   }
 
-  document.getElementById('room-name').innerHTML = title
+  // affichage conditionnel des horloges
+  document.querySelectorAll('.clock_outer_wrapper').forEach((item) => {
+    item.style.display = 'none';
+  });
+  
+  if (!roomId) {
+    document.querySelectorAll('.clock_outer_wrapper').forEach((item) => {
+      item.style.display = 'block';
+    });
+  } else {
+    document.querySelector(`.clock_outer_wrapper[data-room="${roomId}"]`).style.display = 'block';
+
+    let idx = keyById(roomId);
+    if (rooms[idx].started) {
+      document.getElementById('btn_cmd_start').style.display = 'none';
+      document.getElementById('btn_cmd_pause').style.display = 'block';
+    } else {
+      document.getElementById('btn_cmd_start').style.display = 'block';
+      document.getElementById('btn_cmd_pause').style.display = 'none';
+    }
+  }
 }
 
-// démarre le timer de la salle courante
-function startTimer(roomId) {
+function startTimer(roomId, emit = false) {
   if (!roomId) return;
-
-  socket.emit('START', {room: roomId});
-
   let idx = keyById(roomId);
 
-  displayClock();
-  document.getElementById('dot').classList.toggle('tictac');
-  counter++;
+  rooms[idx].started = true;
   rooms[idx].timer = setInterval(() => {
     updateTimer(roomId);
   }, 1000);
+
+  document.getElementById('btn_cmd_start').style.display = 'none';
+  document.getElementById('btn_cmd_pause').style.display = 'block';
+
+  if (emit) { // anti larsen
+    socket.emit('START', {room: roomId});
+  }
 }
 
 function updateTimer(roomId) {
-
-}
-
-// met en pause le timer de la salle courante
-function pauseTimer(roomId) {
   if (!roomId) return;
-
   let idx = keyById(roomId);
 
-  if (counter > 0) {
-    counter--;
+  rooms[idx].counter++;
+
+  displayClock(roomId);
+}
+
+function pauseTimer(roomId, emit = false) {
+  if (!roomId) return;
+  let idx = keyById(roomId);
+
+  if (rooms[idx].started) {
+    clearInterval(rooms[idx].timer);
+    rooms[idx].started = false;
+
+    document.getElementById('btn_cmd_start').style.display = 'block';
+    document.getElementById('btn_cmd_pause').style.display = 'none';
+  
+    if (emit) { // anti larsen
+      socket.emit('PAUSE', {room: roomId});
+    }
   }
-
-  socket.emit('PAUSE', {room: roomId});
-
-  clearInterval(rooms[idx].timer);
 }
 
-// remet à zéro le timer de la salle courante
-function resetTimer(roomId) {
+function resetTimer(roomId, emit = false) {
   if (!roomId) return;
-
   let idx = keyById(roomId);
-
-  socket.emit('RESET', {room: roomId});
 
   if (rooms[idx].started) {
     clearInterval(rooms[idx].timer);
   }
 
+  rooms[idx].started = false;
   rooms[idx].counter = 0;
 
-  displayClock();
+  displayClock(roomId);
+
+  if (emit) { // anti larsen
+    socket.emit('RESET', {room: roomId});
+  }
 }
 
 export {

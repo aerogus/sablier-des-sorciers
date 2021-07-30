@@ -124,9 +124,18 @@ function reset(id) {
   return true;
 }
 
-// état mémoire
-function dump() {
+function fullDump() {
   return rooms;
+}
+
+function dump() {
+  return rooms.map(item => {
+    return {
+      id: item.id,
+      counter: item.counter,
+      started: item.started
+    }
+  });
 }
 
 module.exports = {
@@ -136,5 +145,6 @@ module.exports = {
   start,
   pause,
   reset,
+  fullDump,
   dump
 };

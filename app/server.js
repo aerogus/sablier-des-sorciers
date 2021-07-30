@@ -37,18 +37,24 @@ io.on('connection', socket => {
   socket.on('START', params => {
     log(`START reçu pour salle ${params.room}`);
     rooms.start(params.room);
+    socket.broadcast.emit('STARTED', {room: params.room});
+    log(`STARTED broadcasté`);
   });
 
   // PAUSE compteur
   socket.on('PAUSE', params => {
     log(`PAUSE reçu pour salle ${params.room}`);
     rooms.pause(params.room);
+    socket.broadcast.emit('PAUSED', {room: params.room});
+    log(`PAUSED broadcasté`);
   });
 
   // RESET compteur
   socket.on('RESET', params => {
     log(`RESET reçu pour salle ${params.room}`);
     rooms.reset(params.room);
+    socket.broadcast.emit('RESETED', {room: params.room});
+    log(`RESETED broadcasté`);
   });
 
   // déconnexion du client
@@ -64,7 +70,7 @@ log(utils.getIp());
 settings.set('host', utils.getIp()['en0'][0]);
 rooms.init();
 log('rooms:');
-log(rooms.dump());
+log(rooms.fullDump());
 
 // démarrage serveur
 log(`serveur ${settings.get('host')} en cours de démarrage...`);
