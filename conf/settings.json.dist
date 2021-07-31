@@ -1,0 +1,9 @@
+{
+  "title": "Le Sablier des Sorciers",
+  "version": "0.9",
+  "author": "Guillaume Seznec <guillaume@seznec.fr>",
+  "url": "https://github.com/aerogus/sablier-des-sorciers.git",
+  "port": 80,
+  "host": "www.sablier-des-sorciers.test",
+  "rooms": 2
+}

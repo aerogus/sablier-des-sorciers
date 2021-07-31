@@ -2,6 +2,16 @@
 
 Compteurs multi salles pour un escape game autour du thème de Harry Potter
 
+![capture d'écran](screenshot.jpg)
+
+L'interface possède 3 écrans :
+
+- le tableau de bord affiche les chrono de l'ensemble des salles
+- salle A n'affiche le chrono que de cette salle + le contrôle start/pause/reset
+- salle B n'affiche le chrono que de cette salle + le contrôle start/pause/reset
+
+Il y a à la fois une horloge locale sur chaque client, et une horloge centrale côté serveur, ce qui permet de faire des refresh côté client sans perdre d'info. Pas de persistence des données côté serveur, juste en mémoire.
+
 ## Prérequis
 
 * node.js stable (actuellement v14)
@@ -19,7 +29,7 @@ git clone https://github.com/aerogus/sablier-des-sorciers.git
 cd sablier-des-sorciers
 ```
 
-Adaptez le fichier `conf/settings.json` pour saisir l'ip de la machine serveur, le nombre de rooms...
+Copiez le fichier `conf/settings.json.dist` vers `conf/settings.json` et adaptez le pour saisir l'ip ou le host de la machine serveur et le nombre de rooms à créer...
 
 Si Docker est installé, vous pouvez utiliser la commande suivante :
 
@@ -46,7 +56,11 @@ Devrait afficher
 
 Allez maintenant avec votre navigateur à l'url `http://127.0.0.1`
 
-Pour lancer le serveur au démarrage de la machine, sous Debian avec systemd, en root (ou préfixé par sudo) :
+## Lancement au démarrage
+
+Pour lancer le serveur au démarrage de la machine, sous Debian avec `systemd`, en root (ou préfixé par sudo) :
+
+Adaptez le fichier `./services/sablier-des-sorciers.service` (chemin de l'app)
 
 ```
 cp ./services/sablier-des-sorciers.service /etc/systemd/system
@@ -54,6 +68,18 @@ systemctl daemon-reload
 systemctl enable sablier-des-sorciers
 systemctl start sablier-des-sorciers
 ```
+
+## Raccourcis clavier
+
+| Touche | Description |
+|--------|-------------|
+| F | passage en **F**ull screen
+| S | **S**tart du compteur pour la salle courante
+| P | **P**ause du compteur pour la salle courante
+| R | **R**eset du compteur pour la salle courante
+| T | aller au **T**ableau de bord
+| A | aller à la salle **A**
+| B | aller à la salle **B**
 
 ## Ressources
 

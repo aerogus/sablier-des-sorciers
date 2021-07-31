@@ -37,9 +37,10 @@ module.exports = {
   },
 
   save() {
-    // on n'écrase pas si pas chargé !
-    if (this.loaded) {
-      fs.writeFileSync(settingsFile, JSON.stringify(this.data));
+    // lazy loading
+    if (!this.loaded) {
+      this.load();
     }
+    fs.writeFileSync(settingsFile, JSON.stringify(this.data));
   }
 }

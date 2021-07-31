@@ -116,6 +116,21 @@ function handleKeyPressed() {
         }
         break;
 
+      case "T": // Aller au Tableau de bord
+        console.log(`touche T pressée -> GO Tableau de bord`);
+        goToRoom('');
+        break;
+
+      case "A": // Aller à la salle A
+        console.log(`touche A pressée -> GO Salle A`);
+        goToRoom('A');
+        break;
+
+      case "B": // Aller à la salle B
+        console.log(`touche B pressée -> GO Salle B`);
+        goToRoom('B');
+        break;
+
       case "S": // START
         if (room) {
           console.log(`touche S pressée pour room active (${room})`);
