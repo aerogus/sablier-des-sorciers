@@ -49,7 +49,7 @@ function init() {
       if (rooms[idx].started) {
         console.log('lancement chrono pour room ' + room.id);
         rooms[idx].timer = setInterval(() => {
-          updateTimer(room.id);
+          updateCounter(room.id);
         }, 1000);
       } else {
         rooms[idx].timer = null;
@@ -60,17 +60,17 @@ function init() {
 
   socket.on('STARTED', (params) => {
     console.log(`STARTED reçu pour room ${params.room}`);
-    startTimer(params.room, false);
+    startCounter(params.room, false);
   });
 
   socket.on('PAUSED', (params) => {
     console.log(`PAUSED reçu pour room ${params.room}`);
-    pauseTimer(params.room, false);
+    pauseCounter(params.room, false);
   });
 
   socket.on('RESETED', (params) => {
     console.log(`RESETED reçu pour room ${params.room}`);
-    resetTimer(params.room, false);
+    resetCounter(params.room, false);
   });
 }
 
@@ -87,13 +87,13 @@ function handleBtnsCmd() {
     btn.addEventListener('click', () => {
       switch (btn.dataset.cmd) {
         case 'START':
-          startTimer(room, true);
+          startCounter(room, true);
           break;
         case 'PAUSE':
-          pauseTimer(room, true);
+          pauseCounter(room, true);
           break;
         case 'RESET':
-          resetTimer(room, true);
+          resetCounter(room, true);
           break;
       }
     });
@@ -101,7 +101,6 @@ function handleBtnsCmd() {
 }
 
 function handleKeyPressed() {
-  let room = settings.room;
   document.addEventListener("keydown", (e) => {
     let key = e.key.toUpperCase();
     switch (key) {
@@ -120,21 +119,21 @@ function handleKeyPressed() {
       case "S": // START
         if (room) {
           console.log(`touche S pressée pour room active (${room})`);
-          startTimer(room, true);
+          startCounter(room, true);
         }
         break;
 
       case "P": // PAUSE
         if (room) {
           console.log(`touche P pressée pour room active (${room})`);
-          pauseTimer(room, true);
+          pauseCounter(room, true);
         }
         break;
 
       case "Z": // RESET
         if (room) {
           console.log(`touche Z pressée pour room active (${room})`);
-          resetTimer(room, true);
+          resetCounter(room, true);
         }
         break;
     }
@@ -205,13 +204,13 @@ function goToRoom(roomId) {
   }
 }
 
-function startTimer(roomId, emit = false) {
+function startCounter(roomId, emit = false) {
   if (!roomId) return;
   let idx = keyById(roomId);
 
   rooms[idx].started = true;
   rooms[idx].timer = setInterval(() => {
-    updateTimer(roomId);
+    updateCounter(roomId);
   }, 1000);
 
   document.getElementById('btn_cmd_start').style.display = 'none';
@@ -222,16 +221,20 @@ function startTimer(roomId, emit = false) {
   }
 }
 
-function updateTimer(roomId) {
+function updateCounter(roomId) {
   if (!roomId) return;
   let idx = keyById(roomId);
 
   rooms[idx].counter++;
 
+  if (rooms[idx].counter >= (60 * 60)) {
+    rooms[idx].counter = 0; // 1 heure max
+  }
+
   displayClock(roomId);
 }
 
-function pauseTimer(roomId, emit = false) {
+function pauseCounter(roomId, emit = false) {
   if (!roomId) return;
   let idx = keyById(roomId);
 
@@ -248,7 +251,7 @@ function pauseTimer(roomId, emit = false) {
   }
 }
 
-function resetTimer(roomId, emit = false) {
+function resetCounter(roomId, emit = false) {
   if (!roomId) return;
   let idx = keyById(roomId);
 
@@ -260,6 +263,9 @@ function resetTimer(roomId, emit = false) {
   rooms[idx].counter = 0;
 
   displayClock(roomId);
+
+  document.getElementById('btn_cmd_start').style.display = 'block';
+  document.getElementById('btn_cmd_pause').style.display = 'none';
 
   if (emit) { // anti larsen
     socket.emit('RESET', {room: roomId});

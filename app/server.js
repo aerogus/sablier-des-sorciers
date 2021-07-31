@@ -36,7 +36,7 @@ io.on('connection', socket => {
   // START compteur
   socket.on('START', params => {
     log(`START reçu pour salle ${params.room}`);
-    rooms.start(params.room);
+    rooms.startCounter(params.room);
     socket.broadcast.emit('STARTED', {room: params.room});
     log(`STARTED broadcasté`);
   });
@@ -44,7 +44,7 @@ io.on('connection', socket => {
   // PAUSE compteur
   socket.on('PAUSE', params => {
     log(`PAUSE reçu pour salle ${params.room}`);
-    rooms.pause(params.room);
+    rooms.pauseCounter(params.room);
     socket.broadcast.emit('PAUSED', {room: params.room});
     log(`PAUSED broadcasté`);
   });
@@ -52,7 +52,7 @@ io.on('connection', socket => {
   // RESET compteur
   socket.on('RESET', params => {
     log(`RESET reçu pour salle ${params.room}`);
-    rooms.reset(params.room);
+    rooms.resetCounter(params.room);
     socket.broadcast.emit('RESETED', {room: params.room});
     log(`RESETED broadcasté`);
   });
@@ -64,10 +64,16 @@ io.on('connection', socket => {
 
 });
 
+log(`------`);
+log(`titre   : ${settings.get('title')}`);
+log(`version : ${settings.get('version')}`);
+log(`auteur  : ${settings.get('author')}`);
+log(`url     : ${settings.get('url')}`);
+log(`------`);
+
 log('Liste des interfaces réseau:')
 log(utils.getIp());
 
-settings.set('host', utils.getIp()['en0'][0]);
 rooms.init();
 log('rooms:');
 log(rooms.fullDump());
@@ -77,11 +83,6 @@ log(`serveur ${settings.get('host')} en cours de démarrage...`);
 
 server.listen(settings.get('port'), () => {
   log(`écoute sur le port ${settings.get('port')}`);
-  log(`------`);
-  log(`version : ${settings.get('version')}`);
-  log(`auteur  : ${settings.get('author')}`);
-  log(`url     : ${settings.get('url')}`);
-  log(`------`);
 });
 
 app.disable('x-powered-by');

@@ -45,33 +45,36 @@ function create() {
 }
 
 // suppression d'une salle
-function destroy(id) {
-  let idx = keyById();
+function destroy(roomId) {
+  if (!roomId) return;
+  let idx = keyById(roomId);
 
-  rooms = rooms.filter(item => item.id !== id);
-  log(`retrait room ${id} OK`);
+  rooms = rooms.filter(item => item.id !== roomId);
+  log(`retrait room ${roomId} OK`);
 }
 
 // lance le compteur d'une salle
-function start(id) {
-  let idx = keyById(id);
+function startCounter(roomId) {
+  if (!roomId) return;
+  let idx = keyById(roomId);
 
   if (rooms[idx].started) {
-    throw new Error(`chrono déjà lancé pour salle ${id}`)
+    throw new Error(`chrono déjà lancé pour salle ${roomId}`)
   }
 
-  log(`start room ${id}`);
+  log(`startCounter room ${roomId}`);
 
   rooms[idx].started = true;
   rooms[idx].timer = setInterval(() => {
-    updateCounter(id);
+    updateCounter(roomId);
   }, 1000);
 
   return true;
 }
 
-function updateCounter(id) {
-  let idx = keyById(id);
+function updateCounter(roomId) {
+  if (!roomId) return;
+  let idx = keyById(roomId);
 
   rooms[idx].counter++;
 
@@ -79,7 +82,7 @@ function updateCounter(id) {
     rooms[idx].counter = 0; // 1 heure max
   }
 
-  log(`room ${id} : ${rooms[idx].counter}`)
+  log(`room ${roomId} : ${rooms[idx].counter}`)
 
   return true;
 }
@@ -93,14 +96,15 @@ function keyById(id) {
 }
 
 // met en pause une salle
-function pause(id) {
-  let idx = keyById(id);
+function pauseCounter(roomId) {
+  if (!roomId) return;
+  let idx = keyById(roomId);
 
   if (!rooms[idx].started) {
-    throw new Error(`chrono n'était pas lancé pour salle ${id}`)
+    throw new Error(`chrono n'était pas lancé pour salle ${roomId}`)
   }
 
-  log(`pause room ${rooms[idx].id}`);
+  log(`pause room ${roomId}`);
 
   clearInterval(rooms[idx].timer);
   rooms[idx].started = false;
@@ -109,10 +113,11 @@ function pause(id) {
 }
 
 // remet à zéro le compteur d'une salle
-function reset(id) {
-  let idx = keyById(id);
+function resetCounter(roomId) {
+  if (!roomId) return;
+  let idx = keyById(roomId);
 
-  log(`reset room ${rooms[idx].id}`);
+  log(`resetCounter room ${roomId}`);
 
   if (rooms[idx].started) {
     rooms[idx].started = false;
@@ -142,9 +147,9 @@ module.exports = {
   init,
   create,
   destroy,
-  start,
-  pause,
-  reset,
+  startCounter,
+  pauseCounter,
+  resetCounter,
   fullDump,
   dump
 };
