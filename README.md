@@ -12,6 +12,12 @@ L'interface possède 3 écrans :
 
 Il y a à la fois une horloge locale sur chaque client, et une horloge centrale côté serveur, ce qui permet de faire des refresh côté client sans perdre d'info. Pas de persistence des données côté serveur, juste en mémoire.
 
+## Démo
+
+Une instance publique de test est disponible à l'url suivante :
+http://sablier-des-sorciers.aerogus.net
+attention c'est open bar, pas d'authentification
+
 ## Prérequis
 
 * node.js stable (actuellement v14)
