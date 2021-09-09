@@ -10,6 +10,7 @@
   "author": "Guillaume Seznec <guillaume@seznec.fr>",
   "license": "ISC",
   "dependencies": {
+    "basic-auth": "2.0.1",
     "ejs": "3.1.6",
     "express": "4.17.1",
     "moment": "2.29.1",

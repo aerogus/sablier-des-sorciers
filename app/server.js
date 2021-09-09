@@ -15,7 +15,8 @@
 const settings = require('./lib/settings')
   , log = require('./lib/log')
   , utils = require('./lib/utils')
-  , rooms = require('./lib/rooms');
+  , rooms = require('./lib/rooms')
+  , auth = require('./lib/auth');
 
 // connexion d'un client
 io.on('connection', socket => {
@@ -84,6 +85,8 @@ log(`serveur ${settings.get('host')} en cours de démarrage...`);
 server.listen(settings.get('port'), () => {
   log(`écoute sur le port ${settings.get('port')}`);
 });
+
+app.use(auth);
 
 app.disable('x-powered-by');
 
