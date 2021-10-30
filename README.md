@@ -87,6 +87,16 @@ systemctl start sablier-des-sorciers
 | A | aller à la salle **A**
 | B | aller à la salle **B**
 
+## Installation avec un certificat TLS pour le https
+
+Utiliser le client certbot
+
+Lancer le mini serveur web `./certbot/server.js` qui tourne sur le port 80, il doit être accessible de l'extérieur pour le acme challenge
+
+Voir la doc de `certbot` pour la génération du certificat.
+
+https://certbot.eff.org/lets-encrypt/debianbuster-other
+
 ## Ressources
 
 * exemple de décompte, vidéo YouTube: https://www.youtube.com/watch?v=UeQAarcw000
