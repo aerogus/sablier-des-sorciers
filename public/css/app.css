@@ -19,6 +19,14 @@
 
 /* global */
 
+body {
+  background: black;
+/*
+  overflow-y: hidden;
+  overflow-x: hidden;
+  */
+}
+
 #wrapper {
     width: 100%;
     height: 100%;

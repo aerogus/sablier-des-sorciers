@@ -5,12 +5,29 @@
  * reçoit et broadcast des messages websocket
  */
 
- 'use strict';
+'use strict';
 
- const express = require('express')
-  , app = express()
-  , server = require('http').Server(app)
-  , io = require('socket.io')(server);
+const express = require('express')
+  , fs = require('fs')
+  , http = require('http')
+  , https = require('https');
+
+// Certificate
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/sablier-des-sorciers.aerogus.net/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/sablier-des-sorciers.aerogus.net/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/sablier-des-sorciers.aerogus.net/chain.pem', 'utf8');
+
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  ca: ca
+};
+
+const app = express();
+
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
+const io = require('socket.io')(httpsServer);
 
 const settings = require('./lib/settings')
   , log = require('./lib/log')
@@ -82,13 +99,21 @@ log(rooms.fullDump());
 // démarrage serveur
 log(`serveur ${settings.get('host')} en cours de démarrage...`);
 
-server.listen(settings.get('port'), () => {
+httpServer.listen(settings.get('port'), () => {
   log(`écoute sur le port ${settings.get('port')}`);
+});
+
+httpsServer.listen(443, () => {
+  log(`écoute sur le port 443`);
 });
 
 app.use(auth);
 
 app.disable('x-powered-by');
+
+app.use((req, res, next) => {
+  req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
+})
 
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
@@ -98,7 +123,8 @@ app.get('/:room([A-Z])?', (req, res) => {
   res.render('index', {
     room: req.params.room,
     ws_host: settings.get('host'),
-    ws_port: settings.get('port')
+    ws_port: settings.get('port'),
+    ws_port_secure: settings.get('port_secure')
   });
 });
 
